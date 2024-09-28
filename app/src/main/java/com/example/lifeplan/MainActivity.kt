@@ -1,11 +1,8 @@
 package com.example.lifeplan
 
-import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -41,8 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -61,7 +59,6 @@ import java.util.Calendar
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -85,7 +82,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier, viewModel: ScheduleViewModel) {
     val itemSchedule by viewModel.allSchedule.observeAsState(emptyList())
@@ -96,7 +92,7 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: ScheduleViewModel) {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        HeaderScreen(modifier, title = "Lịch trình") {
+        HeaderScreen(modifier, title = stringResource(R.string.schedule)) {
             // Click để thêm lịch trình
             isShowAddDialog = !isShowAddDialog
         }
@@ -170,7 +166,6 @@ fun HeaderScreen(
     }
 }
 
-@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun AddSchedule(
     modifier: Modifier = Modifier,
@@ -206,8 +201,8 @@ fun AddSchedule(
                     modifier = modifier.fillMaxWidth(),
                     value = note,
                     onValueChange = { note = it },
-                    label = { Text("Ghi chú") },
-                    placeholder = { Text("Viết ghi chú vào đây") },
+                    label = { Text(stringResource(R.string.note)) },
+                    placeholder = { Text(stringResource(R.string.write_note_here)) },
                 )
                 Spacer(modifier = modifier.height(6.dp))
 
@@ -218,7 +213,7 @@ fun AddSchedule(
                 ) {
                     Text(
                         modifier = modifier,
-                        text = "Thời gian: "
+                        text = stringResource(R.string.time)
                     )
                     Text(
                         modifier = modifier.clickable {
@@ -245,8 +240,9 @@ fun AddSchedule(
                 ) {
                     Text(
                         modifier = modifier,
-                        text = "Lặp lại: "
+                        text = stringResource(R.string.repeat)
                     )
+                    Spacer(modifier = modifier.width(8.dp))
                     Text(
                         modifier = modifier.clickable { isShowFreqDialog = true },
                         text = freq.desc
@@ -302,7 +298,7 @@ fun AddSchedule(
                         ) {
                             Text(
                                 modifier = modifier,
-                                text = "Ngày thực hiện: "
+                                text = stringResource(R.string.implementation_date)
                             )
                             Text(
                                 modifier = modifier
@@ -322,7 +318,7 @@ fun AddSchedule(
                         ) {
                             Text(
                                 modifier = modifier,
-                                text = "Ngày bắt đầu: "
+                                text = stringResource(R.string.start_date)
                             )
                             Text(
                                 modifier = modifier
@@ -340,7 +336,7 @@ fun AddSchedule(
                                 .align(Alignment.CenterHorizontally)
                                 .fillMaxWidth()
                                 .clickable { isShowDateDialog = true },
-                            text = "Từ $startDate đến hết $endDate"
+                            text = stringResource(R.string.from_to, startDate, endDate)
                         )
                     }
 
@@ -353,7 +349,7 @@ fun AddSchedule(
                         ) {
                             Text(
                                 modifier = modifier,
-                                text = "Số ngày đã chọn: "
+                                text = stringResource(R.string.selected_date)
                             )
                             Text(
                                 modifier = modifier.clickable {
@@ -417,24 +413,15 @@ fun AddSchedule(
                         )
                     onSave(newSchedule)
                 }) {
-                Text("Lưu")
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
             Button(
                 modifier = modifier,
                 onClick = { onDismiss() }) {
-                Text("Hủy")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
-}
-
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun MainScreenPreview(modifier: Modifier = Modifier) {
-    LifePlanTheme {
-
-    }
 }

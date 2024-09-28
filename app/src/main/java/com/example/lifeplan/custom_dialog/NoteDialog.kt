@@ -13,6 +13,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.lifeplan.R
 
 
 @Composable
@@ -31,13 +33,12 @@ fun NoteDialog(
                 OutlinedTextField(
                     value = editNote,
                     onValueChange = { newText -> editNote = newText },
-                    placeholder = { Text("Viết ghi chú vào đây") },
+                    placeholder = { Text(stringResource(R.string.write_note_here)) },
                     modifier = modifier.fillMaxWidth(),
-                    label = { Text("Ghi chú") },
+                    label = { Text(stringResource(R.string.note)) },
                     shape = MaterialTheme.shapes.small
                 )
             }
-
         },
         confirmButton = {
             Button(
@@ -47,7 +48,7 @@ fun NoteDialog(
                     onDismiss()
                 }
             ) {
-                Text("Lưu")
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {
@@ -57,7 +58,7 @@ fun NoteDialog(
                     onDismiss()
                 }
             ) {
-                Text("Hủy")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

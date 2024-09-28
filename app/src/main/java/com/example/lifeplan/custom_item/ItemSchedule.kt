@@ -1,7 +1,5 @@
 package com.example.lifeplan.custom_item
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -37,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,7 +49,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ItemSchedule(
     modifier: Modifier = Modifier,
@@ -159,7 +157,7 @@ fun ItemSchedule(
                 }
 
                 val rotationAngle by animateFloatAsState(
-                    targetValue = if (isMore) 180f else 0f, label = "xoay"
+                    targetValue = if (isMore) 180f else 0f, label = "rotate"
                 )
                 IconButton(
                     modifier = modifier.align(Alignment.CenterVertically),
@@ -202,8 +200,8 @@ fun ItemSchedule(
                 Text(
                     // hiển thị tần suất
                     text = String.format(
-                        "%s thông báo sự kiện",
-                        if (isRepeat) "Đang bật" else "Đang tắt"
+                        "%s" + stringResource(R.string.notification_of_event),
+                        if (isRepeat) stringResource(R.string.turning_on) else stringResource(R.string.turning_off)
                     ),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = modifier
@@ -244,33 +242,45 @@ fun ItemSchedule(
                         Text(
                             // hiển thị tần suất, click để chọn tần suất
                             text = when (selectedFrequency) {
-                                FrequencyItems.ONCE -> "Chỉ thông báo vào $dateStart"
-                                FrequencyItems.DAILY -> "Thông báo mỗi ngày vào ${
-                                    dateStart.substring(
+                                FrequencyItems.ONCE -> stringResource(
+                                    R.string.only_announced_at,
+                                    dateStart
+                                )
+
+                                FrequencyItems.DAILY -> stringResource(
+                                    R.string.announcement_every_day_at, dateStart.substring(
                                         0..4
                                     )
-                                }"
+                                )
 
-                                FrequencyItems.WEEKLY -> "Thông báo hằng tuần vào ${
-                                    getDayOfWeek(
+                                FrequencyItems.WEEKLY -> stringResource(
+                                    R.string.weekly_announcement_at, getDayOfWeek(
                                         dateStart
                                     )
-                                }"
+                                )
 
-                                FrequencyItems.MONTHLY -> "Thông báo hằng tháng vào ${
-                                    dateStart.substring(
+                                FrequencyItems.MONTHLY -> stringResource(
+                                    R.string.announcement_every_month_at, dateStart.substring(
                                         0..4
                                     )
-                                }"
+                                )
 
-                                FrequencyItems.YEARLY -> "Thông báo hằng năm vào ${
-                                    dateStart.substring(
+                                FrequencyItems.YEARLY -> stringResource(
+                                    R.string.announcement_every_year_at, dateStart.substring(
                                         0..4
                                     )
-                                }"
+                                )
 
-                                FrequencyItems.DATETODATE -> "Thông báo từ $dateStart đến $dateEnd"
-                                FrequencyItems.PICKDATE -> "Thông báo trong ${pickedDate.size} ngày"
+                                FrequencyItems.DATETODATE -> stringResource(
+                                    R.string.announcement_from_to,
+                                    dateStart,
+                                    dateEnd
+                                )
+
+                                FrequencyItems.PICKDATE -> stringResource(
+                                    R.string.notice_in_days,
+                                    pickedDate.size
+                                )
                             },
                             modifier = modifier.clickable {
                                 //click để chọn tần suất
@@ -354,7 +364,7 @@ fun ItemSchedule(
                         Spacer(modifier = modifier.width(8.dp))
 
                         Text(
-                            text = "Xóa",
+                            text = stringResource(R.string.delete),
                             modifier = modifier.clickable {
                                 onDelete()
                             }
@@ -366,7 +376,6 @@ fun ItemSchedule(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getDayOfWeek(dateStr: String, pattern: String = "dd/MM/yyyy"): String {
     // Chuyển chuỗi ngày thành LocalDate
     val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())

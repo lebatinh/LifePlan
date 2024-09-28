@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Sống kế hoạch</string>
+    <string name="select_start_and_end_date">Chọn ngày bắt đầu và kết thúc</string>
+    <string name="start_date">"Ngày bắt đầu: "</string>
+    <string name="end_date">"Ngày kết thúc: "</string>
+    <string name="save">Lưu</string>
+    <string name="cancel">Hủy</string>
+    <string name="select_a_schedule_date">Chọn ngày lên lịch</string>
+    <string name="number_of_days_for_which_you_want_to_schedule">Số ngày mà bạn muốn đặt lịch</string>
+    <string name="number_of_date">"Ngày thứ %1$s: "</string>
+    <string name="click_to_select_date">Click để chọn ngày</string>
+    <string name="select_date">Chọn ngày tại đây</string>
+    <string name="select_frequency_for_event">Chọn tần suất cho sự kiện</string>
+    <string name="write_note_here">Viết ghi chú vào đây</string>
+    <string name="note">Ghi chú</string>
+    <string name="turning_off">Đang tắt</string>
+    <string name="turning_on">Đang bật</string>
+    <string name="notification_of_event">" thông báo sự kiện"</string>
+    <string name="only_announced_at">Chỉ thông báo vào %1$s</string>
+    <string name="announcement_every_day_at">Thông báo mỗi ngày vào %1$s</string>
+    <string name="weekly_announcement_at">Thông báo hằng tuần vào %1$s</string>
+    <string name="announcement_every_month_at">Thông báo hằng tháng vào %1$s</string>
+    <string name="announcement_every_year_at">Thông báo hằng năm vào %1$s</string>
+    <string name="announcement_from_to">Thông báo từ %1$s đến %2$s</string>
+    <string name="notice_in_days">Thông báo trong %1$s ngày</string>
+    <string name="delete">Xóa</string>
+    <string name="schedule">Lịch trình</string>
+    <string name="time">"Thời gian: "</string>
+    <string name="repeat">"Lặp lại: "</string>
+    <string name="implementation_date">"Ngày thực hiện: "</string>
+    <string name="from_to">Từ %1$s đến hết %2$s</string>
+    <string name="selected_date">"Số ngày đã chọn: "</string>
 </resources>

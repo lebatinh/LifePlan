@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.lifeplan"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-
     // Android core
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")

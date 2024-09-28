@@ -15,7 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.lifeplan.R
 import com.example.lifeplan.custom_item.FrequencyItems
 
 @Composable
@@ -31,8 +33,10 @@ fun FrequencyDialog(
     var freq by remember { mutableStateOf(frequency) }
     var isShowDatePicker by remember { mutableStateOf(false) }
     var selectedDates by remember { mutableStateOf<List<String>>(emptyList()) }
-    var startDate by remember { mutableStateOf("Click để chọn ngày") }
-    var endDate by remember { mutableStateOf("Click để chọn ngày") }
+
+    val selectDate = stringResource(R.string.select_date)
+    var startDate by remember { mutableStateOf(selectDate) }
+    var endDate by remember { mutableStateOf(selectDate) }
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -53,10 +57,10 @@ fun FrequencyDialog(
 
                 onDismiss()
             }) {
-                Text("Lưu")
+                Text(stringResource(R.string.save))
             }
         },
-        title = { Text("Chọn tần suất cho sự kiện") },
+        title = { Text(stringResource(R.string.select_frequency_for_event)) },
         text = {
             Column(
                 modifier = modifier
