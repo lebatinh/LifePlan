@@ -1,9 +1,17 @@
 package com.example.lifeplan
 
+import android.Manifest
+import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +20,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.AlertDialog
@@ -42,6 +50,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lifeplan.custom_dialog.FrequencyDialog
@@ -72,25 +82,46 @@ class MainActivity : ComponentActivity() {
                         factory = ViewModelProvider
                             .AndroidViewModelFactory(
                                 LocalContext.current.applicationContext
-                                        as android.app.Application
+                                        as Application
                             )
                     )
-                    MainScreen(viewModel = viewModel)
+                    MainScreen(viewModel = viewModel, modifier = Modifier)
                 }
             }
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+
+                // Yêu cầu quyền POST_NOTIFICATIONS
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    1001
+                )
+            }
+        }
+
+        val channel = NotificationChannel(
+            "ALARM_CHANNEL",
+            "Alarm Notifications",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier, viewModel: ScheduleViewModel) {
+fun MainScreen(modifier: Modifier, viewModel: ScheduleViewModel) {
     val itemSchedule by viewModel.allSchedule.observeAsState(emptyList())
     var isShowAddDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
     ) {
         HeaderScreen(modifier, title = stringResource(R.string.schedule)) {
             // Click để thêm lịch trình
@@ -101,7 +132,12 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: ScheduleViewModel) {
             // hiện dialog thêm lịch trình
             AddSchedule(
                 modifier = modifier
-                    .padding(16.dp),
+                    .padding(8.dp)
+                    .scrollable(
+                        enabled = true,
+                        state = rememberScrollState(),
+                        orientation = Orientation.Vertical
+                    ),
                 onSave = { schedule ->
                     viewModel.addSchedule(schedule)
                     isShowAddDialog = !isShowAddDialog
@@ -112,9 +148,14 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: ScheduleViewModel) {
 
         Spacer(modifier = modifier.size(16.dp))
         LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            contentPadding = PaddingValues(top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = modifier
+                .fillMaxSize()
+                .scrollable(
+                    enabled = true,
+                    state = rememberScrollState(),
+                    orientation = Orientation.Vertical
+                ),
+            contentPadding = PaddingValues(top = 16.dp)
         ) {
             items(itemSchedule, key = { it.id }) { schedule ->
                 // Truyền đúng thuộc tính của đối tượng Schedule
@@ -168,7 +209,7 @@ fun HeaderScreen(
 
 @Composable
 fun AddSchedule(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     onDismiss: () -> Unit,
     onSave: (Schedule) -> Unit
 ) {
@@ -194,8 +235,15 @@ fun AddSchedule(
         onDismissRequest = { onDismiss() },
         text = {
             Column(
-                modifier = modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = modifier
+                    .fillMaxWidth()
+                    .scrollable(
+                        enabled = true,
+                        state = rememberScrollState(),
+                        orientation = Orientation.Vertical
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
             ) {
                 OutlinedTextField(
                     modifier = modifier.fillMaxWidth(),
@@ -204,7 +252,6 @@ fun AddSchedule(
                     label = { Text(stringResource(R.string.note)) },
                     placeholder = { Text(stringResource(R.string.write_note_here)) },
                 )
-                Spacer(modifier = modifier.height(6.dp))
 
                 Row(
                     modifier = modifier.fillMaxWidth(),
@@ -231,8 +278,6 @@ fun AddSchedule(
                     )
                 }
 
-                Spacer(modifier = modifier.height(6.dp))
-
                 Row(
                     modifier = modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -249,6 +294,7 @@ fun AddSchedule(
                     )
                     if (isShowFreqDialog) {
                         FrequencyDialog(
+                            modifier = modifier,
                             frequency = freq,
                             onFrequencyItems = { newFrequency ->
                                 freq = newFrequency
@@ -267,8 +313,6 @@ fun AddSchedule(
                         )
                     }
                 }
-
-                Spacer(modifier = modifier.height(6.dp))
 
                 showDate = when (freq) {
                     FrequencyItems.ONCE -> {
@@ -395,7 +439,6 @@ fun AddSchedule(
                     }
                 }
             }
-            Spacer(modifier = modifier.height(6.dp))
         },
         confirmButton = {
             Button(

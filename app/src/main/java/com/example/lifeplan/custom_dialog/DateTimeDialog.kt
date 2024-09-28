@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -114,7 +117,7 @@ fun ShowPickDateDialog( // Chọn thời gian ngày/tháng/năm 1 lần
 
 @Composable
 fun ShowPickDateRangeDialog(// Chọn thời gian ngày/tháng/năm bắt đầu và kết thúc (khoảng)
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     onSave: (String, String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -142,13 +145,11 @@ fun ShowPickDateRangeDialog(// Chọn thời gian ngày/tháng/năm bắt đầu
         text = {
             Column(
                 modifier = modifier
-                    .padding(16.dp)
                     .fillMaxWidth()
             ) {
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
                         .clickable {
                             isShowStartDatePicker = true
                         }
@@ -174,7 +175,6 @@ fun ShowPickDateRangeDialog(// Chọn thời gian ngày/tháng/năm bắt đầu
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
                         .clickable {
                             isShowEndDatePicker = true
                         }
@@ -220,14 +220,14 @@ fun isDateValid(startDate: String, endDate: String): Boolean {
 @SuppressLint("DefaultLocale")
 @Composable
 fun ShowPickMultipleDateDialog(// Chọn danh sách thời gian ngày/tháng/năm riêng biệt
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     nDays: String,
     onSave: (List<String>) -> Unit,
     onDismiss: () -> Unit
 ) {
     var numberOfDays by remember { mutableStateOf(nDays) }
 
-    // Sử dụng Set thay để tự động loại bỏ trùng lặp
+    // Sử dụng Set để tự động loại bỏ trùng lặp
     val selectedDates = remember { mutableSetOf<String>() }
 
     var showDatePicker by remember { mutableStateOf<Int?>(null) }
@@ -255,7 +255,14 @@ fun ShowPickMultipleDateDialog(// Chọn danh sách thời gian ngày/tháng/nă
         title = { Text(stringResource(R.string.select_a_schedule_date)) },
         text = {
             Column(
-                modifier = modifier.padding(8.dp)
+                modifier = modifier
+                    .fillMaxWidth()
+                    .scrollable(
+                        enabled = true, state = rememberScrollState(),
+                        orientation = Orientation.Vertical
+                    ),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OutlinedTextField(
                     value = numberOfDays,
@@ -268,15 +275,13 @@ fun ShowPickMultipleDateDialog(// Chọn danh sách thời gian ngày/tháng/nă
                     modifier = modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = modifier.height(12.dp))
-
                 val numDays = numberOfDays.toIntOrNull() ?: 0
 
                 for (i in 0 until numDays) {
                     Row(
                         modifier = modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
+                            .padding(top = 6.dp)
                             .clickable {
                                 showDatePicker = i
                             },
@@ -285,7 +290,7 @@ fun ShowPickMultipleDateDialog(// Chọn danh sách thời gian ngày/tháng/nă
                     ) {
                         Text(
                             text = stringResource(R.string.number_of_date, i + 1),
-                            modifier = modifier.weight(1f)
+                            modifier = modifier
                         )
                         val date =
                             if (selectedDates.size > i) selectedDates.elementAt(i) else stringResource(

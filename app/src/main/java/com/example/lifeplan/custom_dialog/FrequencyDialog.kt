@@ -1,9 +1,9 @@
 package com.example.lifeplan.custom_dialog
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -16,13 +16,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.example.lifeplan.R
 import com.example.lifeplan.custom_item.FrequencyItems
 
 @Composable
 fun FrequencyDialog(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     frequency: FrequencyItems,
     onFrequencyItems: (FrequencyItems) -> Unit,
     onSaveDateStart: (String) -> Unit,
@@ -65,13 +64,13 @@ fun FrequencyDialog(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
             ) {
                 FrequencyItems.entries
                     .forEach { frequencyItems ->
                         Row(
                             modifier = modifier,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             RadioButton(
                                 selected = freq == frequencyItems,
@@ -82,8 +81,7 @@ fun FrequencyDialog(
                             )
                             Text(
                                 modifier = modifier
-                                    .fillMaxWidth(1f)
-                                    .padding(start = 8.dp),
+                                    .fillMaxWidth(),
                                 text = frequencyItems.desc
                             )
                         }

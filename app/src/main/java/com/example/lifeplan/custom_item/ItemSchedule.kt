@@ -51,7 +51,7 @@ import java.util.Locale
 
 @Composable
 fun ItemSchedule(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     schedule: Schedule,
     onDelete: () -> Unit,
     onUpdate: (Schedule) -> Unit
@@ -101,14 +101,14 @@ fun ItemSchedule(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(16.dp)
             .clickable { isMore = !isMore },
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+                .padding(12.dp)
         ) {
             Row(
                 modifier = modifier.fillMaxWidth()
@@ -132,7 +132,6 @@ fun ItemSchedule(
                         .weight(1f)
                         .align(Alignment.CenterVertically)
                         .animateContentSize()
-                        .padding(start = 8.dp)
                         .clickable(isMore) {
                             //click để tạo dialog sửa note
                             isShowDialog = true
@@ -207,7 +206,6 @@ fun ItemSchedule(
                     modifier = modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically)
-                        .padding(start = 8.dp)
                 )
 
                 Switch(
@@ -306,6 +304,7 @@ fun ItemSchedule(
                         }
                         if (showDialogFreq) {
                             FrequencyDialog(
+                                modifier = modifier,
                                 frequency = selectedFrequency,
                                 onFrequencyItems = { newFrequency ->
                                     selectedFrequency = newFrequency

@@ -20,4 +20,7 @@ interface ScheduleDao {
 
     @Query("SELECT * FROM schedule")
     fun getAllSchedule(): Flow<List<Schedule>>
+
+    @Query("SELECT * FROM schedule WHERE isEnabled = 1")
+    fun getAllEnableSchedule(): Flow<List<Schedule>>
 }

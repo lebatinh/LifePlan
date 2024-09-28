@@ -19,7 +19,7 @@ import com.example.lifeplan.R
 
 @Composable
 fun NoteDialog(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     note: String?,
     onDismiss: () -> Unit,
     onSave: (String) -> Unit
