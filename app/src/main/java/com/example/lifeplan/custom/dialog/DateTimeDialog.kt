@@ -1,4 +1,4 @@
-package com.example.lifeplan.custom_dialog
+package com.example.lifeplan.custom.dialog
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog

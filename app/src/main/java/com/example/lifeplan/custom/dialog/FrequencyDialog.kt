@@ -1,4 +1,4 @@
-package com.example.lifeplan.custom_dialog
+package com.example.lifeplan.custom.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.lifeplan.R
-import com.example.lifeplan.custom_item.FrequencyItems
+import com.example.lifeplan.custom.item.FrequencyItems
 
 @Composable
 fun FrequencyDialog(

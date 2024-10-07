@@ -13,7 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.lifeplan.broadcast_receiver.AlarmReceiver
-import com.example.lifeplan.custom_item.FrequencyItems
+import com.example.lifeplan.custom.item.FrequencyItems
 import com.example.lifeplan.dao.Schedule
 import com.example.lifeplan.dao.ScheduleDao
 import com.example.lifeplan.dao.ScheduleDatabase

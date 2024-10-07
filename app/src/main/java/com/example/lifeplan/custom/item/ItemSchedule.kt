@@ -1,4 +1,4 @@
-package com.example.lifeplan.custom_item
+package com.example.lifeplan.custom.item
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -40,9 +40,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.lifeplan.R
-import com.example.lifeplan.custom_dialog.FrequencyDialog
-import com.example.lifeplan.custom_dialog.NoteDialog
-import com.example.lifeplan.custom_dialog.ShowPickTimeDialog
+import com.example.lifeplan.custom.dialog.FrequencyDialog
+import com.example.lifeplan.custom.dialog.NoteDialog
+import com.example.lifeplan.custom.dialog.ShowPickTimeDialog
 import com.example.lifeplan.dao.Schedule
 import java.time.DayOfWeek
 import java.time.LocalDate

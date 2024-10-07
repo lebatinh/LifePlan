@@ -1,4 +1,4 @@
-package com.example.lifeplan.custom_dialog
+package com.example.lifeplan.custom.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

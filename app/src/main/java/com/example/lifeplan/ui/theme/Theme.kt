@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
+    tertiary = DarkPrimaryVariant,
+
     primary = DarkPrimary,
     onPrimary = DarkOnPrimary,
 
@@ -32,12 +34,12 @@ private val DarkColorScheme = darkColorScheme(
     onError = DarkOnError,
 
     outline = DarkExpense,
-    outlineVariant = DarkIncome,
-
-    tertiary = DarkPrimaryVariant
+    outlineVariant = DarkIncome
 )
 
 private val LightColorScheme = lightColorScheme(
+    tertiary = LightPrimaryVariant,
+
     primary = LightPrimary,
     onPrimary = LightOnPrimary,
 
@@ -56,8 +58,8 @@ private val LightColorScheme = lightColorScheme(
     outline = LightExpense,
     outlineVariant = LightIncome,
 
-    tertiary = LightPrimaryVariant,
-)
+
+    )
 
 @Composable
 fun LifePlanTheme(

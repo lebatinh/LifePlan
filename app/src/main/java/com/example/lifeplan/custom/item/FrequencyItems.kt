@@ -1,4 +1,4 @@
-package com.example.lifeplan.custom_item
+package com.example.lifeplan.custom.item
 
 enum class FrequencyItems (var desc: String){
     ONCE("Một lần"),
