@@ -1,4 +1,4 @@
-package com.example.lifeplan
+package com.example.lifeplan.main_view
 
 import android.Manifest
 import android.app.Application
@@ -54,6 +54,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lifeplan.R
 import com.example.lifeplan.custom.dialog.FrequencyDialog
 import com.example.lifeplan.custom.dialog.ShowPickDateDialog
 import com.example.lifeplan.custom.dialog.ShowPickDateRangeDialog
@@ -68,7 +69,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class MainActivity : ComponentActivity() {
+class ScheduleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

@@ -8,8 +8,8 @@ import android.content.Intent
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.lifeplan.MainActivity
 import com.example.lifeplan.R
+import com.example.lifeplan.main_view.ScheduleActivity
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -22,7 +22,7 @@ class AlarmReceiver : BroadcastReceiver() {
     @SuppressLint("MissingPermission")
     private fun showNotification(context: Context, scheduleId: Int) {
         // Tạo Intent để mở ứng dụng khi người dùng bấm vào thông báo
-        val intentToOpenApp = Intent(context, MainActivity::class.java)
+        val intentToOpenApp = Intent(context, ScheduleActivity::class.java)
         intentToOpenApp.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         val pendingIntent = PendingIntent.getActivity(
             context,
