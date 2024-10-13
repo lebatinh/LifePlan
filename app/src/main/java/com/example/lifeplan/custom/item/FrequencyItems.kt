@@ -1,15 +1,20 @@
 package com.example.lifeplan.custom.item
 
-enum class FrequencyItems (var desc: String){
-    ONCE("Một lần"),
-    DAILY("Hằng ngày"),
-    WEEKLY("Hằng tuần"),
-    MONTHLY("Hằng tháng"),
-    YEARLY("Hằng năm"),
-    DATETODATE("Từ ngày đến ngày"),
-    PICKDATE("Chọn ngày riêng lẻ");
+import android.content.Context
+import com.example.lifeplan.R
 
-    companion object {
-        fun fromString(value: String): FrequencyItems = entries.find { it.desc == value } ?: ONCE
+enum class FrequencyItems {
+    ONCE, DAILY, WEEKLY, MONTHLY, YEARLY, DATETODATE, PICKDATE;
+
+    fun getDescription(context: Context): String {
+        return when (this) {
+            ONCE -> context.getString(R.string.frequency_once)
+            DAILY -> context.getString(R.string.frequency_daily)
+            WEEKLY -> context.getString(R.string.frequency_weekly)
+            MONTHLY -> context.getString(R.string.frequency_monthly)
+            YEARLY -> context.getString(R.string.frequency_yearly)
+            DATETODATE -> context.getString(R.string.frequency_date_to_date)
+            PICKDATE -> context.getString(R.string.frequency_pick_date)
+        }
     }
 }

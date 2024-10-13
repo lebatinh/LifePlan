@@ -1,4 +1,4 @@
-package com.example.lifeplan.dao
+package com.example.lifeplan.schedule_dao
 
 import android.content.Context
 import androidx.room.Database

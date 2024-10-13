@@ -14,14 +14,15 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.lifeplan.broadcast_receiver.AlarmReceiver
 import com.example.lifeplan.custom.item.FrequencyItems
-import com.example.lifeplan.dao.Schedule
-import com.example.lifeplan.dao.ScheduleDao
-import com.example.lifeplan.dao.ScheduleDatabase
+import com.example.lifeplan.schedule_dao.Schedule
+import com.example.lifeplan.schedule_dao.ScheduleDao
+import com.example.lifeplan.schedule_dao.ScheduleDatabase
 import com.example.lifeplan.work_manager.RescheduleWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -31,10 +32,11 @@ import java.util.concurrent.TimeUnit
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
     private val scheduleDao: ScheduleDao = ScheduleDatabase.getDatabase(application).scheduleDao()
 
-    private val enableScheduleFlow: Flow<List<Schedule>> = scheduleDao.getAllEnableSchedule()
+    private val enableScheduleFlow: Flow<List<Schedule>> =
+        scheduleDao.getAllEnableSchedule().flowOn(Dispatchers.IO)
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             enableScheduleFlow.collect { schedules ->
                 handleScheduleChange(schedules)
             }
@@ -58,78 +60,43 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     }
 
     // xử lý thay đổi trong lịch
-    private fun handleScheduleChange(schedules: List<Schedule>) {
+    private fun handleScheduleChange(scheduleList: List<Schedule>) {
         val context = getApplication<Application>().applicationContext
-        val currentTime = LocalDateTime.now()
+        val currentTime = LocalDateTime.now(ZoneId.systemDefault())
 
-        schedules.forEach { schedule ->
+        scheduleList.forEach { schedule ->
             if (!schedule.isEnabled) return@forEach // nếu lịch báo đã bị tắt thì bỏ qua
 
             when (schedule.frequency) {
-                FrequencyItems.ONCE.desc -> {
+                FrequencyItems.ONCE -> {
                     if (schedule.dateStart != null) {
                         val formatterDateTime = formatterDateTime(schedule.time, schedule.dateStart)
 
                         if (currentTime.isAfter(formatterDateTime)) {
                             updateSchedule(schedule.copy(isEnabled = false))
                             cancelAlarm(schedule)
-                        } else if (currentTime.isBefore(formatterDateTime)) {
+                        } else {
                             scheduleAlarm(context, schedule, formatterDateTime)
                         }
                     }
                 }
 
-                FrequencyItems.DAILY.desc, FrequencyItems.WEEKLY.desc, FrequencyItems.MONTHLY.desc, FrequencyItems.YEARLY.desc -> {
+                FrequencyItems.DAILY,
+                FrequencyItems.WEEKLY,
+                FrequencyItems.MONTHLY,
+                FrequencyItems.YEARLY -> {
                     val nextAlarmTime = calculateNextAlarmTime(schedule, currentTime)
                     if (nextAlarmTime != null && nextAlarmTime.isAfter(currentTime)) {
                         scheduleAlarm(context, schedule, nextAlarmTime)
                     }
                 }
 
-                FrequencyItems.DATETODATE.desc -> {
-                    if (schedule.dateStart != null && schedule.dateEnd != null) {
-                        val formatterDateTimeStart =
-                            formatterDateTime(schedule.time, schedule.dateStart)
-                        val formatterDateTimeEnd =
-                            formatterDateTime(schedule.time, schedule.dateEnd)
-
-                        if (currentTime.isAfter(formatterDateTimeEnd)) {
-                            updateSchedule(schedule.copy(isEnabled = false))
-                            cancelAlarm(schedule)
-                        } else if (currentTime.isAfter(formatterDateTimeStart) && currentTime.isBefore(
-                                formatterDateTimeEnd
-                            )
-                        ) {
-                            val time = LocalTime.parse(
-                                schedule.time,
-                                DateTimeFormatter.ofPattern("HH:mm")
-                            )
-                            val nextAlarmTime = LocalDateTime.of(
-                                currentTime.toLocalDate(),
-                                time
-                            )
-                            scheduleAlarm(context, schedule, nextAlarmTime)
-                        }
-                    }
+                FrequencyItems.DATETODATE -> {
+                    handleDateToDateSchedule(context, schedule, currentTime)
                 }
 
-                FrequencyItems.PICKDATE.desc -> {
-                    var hasUpcomingDate = false // kiểm tra có ngày tiếp theo hay không
-
-                    schedule.pickedDate?.forEach { date ->
-                        val nextPickedDate = formatterDateTime(schedule.time, date)
-                        if (nextPickedDate.isAfter(currentTime)) {
-                            scheduleAlarm(context, schedule, nextPickedDate)
-                            hasUpcomingDate = true
-                        }
-                    }
-
-                    // Nếu không có ngày nào còn trong tương lai, tắt lịch và cập nhật isEnabled = false
-                    if (!hasUpcomingDate) {
-                        updateSchedule(schedule.copy(isEnabled = false))
-                        cancelAlarm(schedule)
-                    }
-
+                FrequencyItems.PICKDATE -> {
+                    handlePickDateSchedule(context, schedule, currentTime)
                 }
             }
         }
@@ -142,12 +109,123 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         return LocalDateTime.parse(dateTime, formatter)
     }
 
+    // lập lịch cho tần suất từ ngày đến ngày
+    private fun handleDateToDateSchedule(
+        context: Context,
+        schedule: Schedule,
+        currentTime: LocalDateTime
+    ) {
+        val dateStart =
+            LocalDate.parse(schedule.dateStart, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        val dateEnd = LocalDate.parse(schedule.dateEnd, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        val time = LocalTime.parse(schedule.time, DateTimeFormatter.ofPattern("HH:mm"))
+
+        val startDateTime = dateStart.atTime(time)
+        val endDateTime = dateEnd.atTime(time)
+
+        // Nếu thời gian hiện tại chưa đến ngày bắt đầu
+        if (currentTime.isBefore(startDateTime)) {
+            // Lập lịch từ dateStart đến dateEnd
+            var dateToSchedule = dateStart
+            while (!dateToSchedule.isAfter(dateEnd)) {
+                scheduleAlarm(
+                    context,
+                    schedule,
+                    dateToSchedule.atTime(time)
+                )
+                dateToSchedule = dateToSchedule.plusDays(1)
+            }
+        }
+        // Nếu thời gian hiện tại đã vượt quá dateEnd
+        else if (currentTime.isAfter(endDateTime)) {
+            // hủy báo thức này
+            updateSchedule(schedule.copy(isEnabled = false))
+            cancelAlarm(schedule)
+        }
+        // Nếu thời gian hiện tại nằm trong khoảng từ dateStart đến dateEnd
+        else {
+            // Kiểm tra xem thời gian hiện tại đã qua giờ:phút đã cài đặt chưa
+            // Nếu chưa, đặt lịch cho giờ:phút của ngày hiện tại
+            if (currentTime.isEqual(startDateTime)) {
+                scheduleAlarm(
+                    context,
+                    schedule,
+                    startDateTime
+                )
+            }
+            // Nếu đã qua, kiểm tra ngày tiếp theo
+            else {
+                val nextDate = currentTime.toLocalDate().plusDays(1)
+                val nextScheduledTime = nextDate.atTime(time)
+
+                if (!nextScheduledTime.isAfter(endDateTime)) {
+                    // Nếu không vượt qua, đặt lịch cho giờ:phút của ngày tiếp theo
+                    scheduleAlarm(
+                        context,
+                        schedule,
+                        nextScheduledTime
+                    )
+                }
+            }
+        }
+    }
+
+    // lập lịch cho tần suất chọn danh sách ngày
+    private fun handlePickDateSchedule(
+        context: Context,
+        schedule: Schedule,
+        currentTime: LocalDateTime
+    ) {
+        val time = LocalTime.parse(schedule.time, DateTimeFormatter.ofPattern("HH:mm"))
+        val currentDate = currentTime.toLocalDate()
+        val pickedDates = schedule.pickedDate ?: return
+
+        // Lấy ngày cuối cùng trong danh sách
+        val lastPickedDate = pickedDates.maxOfOrNull {
+            LocalDate.parse(
+                it,
+                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            )
+        } ?: return // Nếu không có ngày nào, thoát
+
+        // Nếu ngày hiện tại đã vượt quá ngày cuối cùng, cập nhật isEnabled = false
+        if (currentTime.toLocalDate().isAfter(lastPickedDate)) {
+            updateSchedule(schedule.copy(isEnabled = false))
+            cancelAlarm(schedule)
+            return
+        }
+
+        // Nếu chưa, kiểm tra ngày đã chọn
+        schedule.pickedDate.forEach { dateStr ->
+            val pickedDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+
+            // Nếu ngày đã chọn trước ngày hiện tại, bỏ qua
+            if (pickedDate.isBefore(currentDate)) {
+                return@forEach // Bỏ qua ngày này
+            } else if (pickedDate.isEqual(currentDate)) {
+                // Nếu ngày đã chọn bằng ngày hiện tại
+                val scheduledTime = pickedDate.atTime(time)
+                if (currentTime.isAfter(scheduledTime)) {
+                    // Nếu đã qua giờ:phút, bỏ qua và tiếp tục kiểm tra các ngày tiếp theo
+                    return@forEach
+                } else {
+                    // Nếu chưa qua giờ:phút đã định thì lập lịch cho giờ:phút của ngày hiện tại
+                    scheduleAlarm(context, schedule, scheduledTime)
+                }
+            } else {
+                // Nếu ngày đã chọn lớn hơn ngày hiện tại
+                scheduleAlarm(context, schedule, pickedDate.atTime(time))
+            }
+        }
+    }
+
     // đặt lịch báo
     @SuppressLint("ScheduleExactAlarm")
     private fun scheduleAlarm(context: Context, schedule: Schedule, alarmTime: LocalDateTime) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("scheduleId", schedule.id)
+            putExtra("scheduleNote", schedule.note)
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -167,7 +245,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     private fun cancelAlarm(schedule: Schedule) {
         val context = getApplication<Application>().applicationContext
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmManager::class.java).apply {
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("scheduleId", schedule.id)
         }
 
@@ -187,18 +265,36 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         currentTime: LocalDateTime
     ): LocalDateTime? {
         val time = LocalTime.parse(schedule.time, DateTimeFormatter.ofPattern("HH:mm"))
+        val alarmTime = currentTime.withHour(time.hour).withMinute(time.minute)
+
         return when (schedule.frequency) {
-            FrequencyItems.DAILY.desc -> currentTime.plusDays(1).withHour(time.hour)
-                .withMinute(time.minute)
+            FrequencyItems.DAILY -> {
+                if (alarmTime.isAfter(currentTime)) {
+                    return alarmTime
+                }
+                alarmTime.plusDays(1)
+            }
 
-            FrequencyItems.WEEKLY.desc -> currentTime.plusWeeks(1).withHour(time.hour)
-                .withMinute(time.minute)
+            FrequencyItems.WEEKLY -> {
+                if (alarmTime.isAfter(currentTime)) {
+                    return alarmTime
+                }
+                alarmTime.plusWeeks(1)
+            }
 
-            FrequencyItems.MONTHLY.desc -> currentTime.plusMonths(1).withHour(time.hour)
-                .withMinute(time.minute)
+            FrequencyItems.MONTHLY -> {
+                if (alarmTime.isAfter(currentTime)) {
+                    return alarmTime
+                }
+                alarmTime.plusMonths(1)
+            }
 
-            FrequencyItems.YEARLY.desc -> currentTime.plusYears(1).withHour(time.hour)
-                .withMinute(time.minute)
+            FrequencyItems.YEARLY -> {
+                if (alarmTime.isAfter(currentTime)) {
+                    return alarmTime
+                }
+                alarmTime.plusYears(1)
+            }
 
             else -> null
         }
@@ -207,12 +303,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     // khởi động lại các lịch báo đã đặt
     fun rescheduleAllAlarms() = viewModelScope.launch(Dispatchers.IO) {
         scheduleDao.getAllEnableSchedule().collect { enableSchedules ->
-            enableSchedules.forEach { schedule ->
-                val nextAlarmTime = calculateNextAlarmTime(schedule, LocalDateTime.now())
-                if (nextAlarmTime != null) {
-                    scheduleAlarm(getApplication(), schedule, nextAlarmTime)
-                }
-            }
+            handleScheduleChange(enableSchedules)
         }
     }
 
@@ -222,6 +313,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             .setInitialDelay(1, TimeUnit.HOURS)
             .build()
 
-        WorkManager.getInstance(getApplication()).enqueue(workRequest)
+        WorkManager.getInstance(getApplication<Application>().applicationContext)
+            .enqueue(workRequest)
     }
 }

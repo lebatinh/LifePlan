@@ -1,5 +1,6 @@
 package com.example.lifeplan.custom.item
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -43,7 +44,7 @@ import com.example.lifeplan.R
 import com.example.lifeplan.custom.dialog.FrequencyDialog
 import com.example.lifeplan.custom.dialog.NoteDialog
 import com.example.lifeplan.custom.dialog.ShowPickTimeDialog
-import com.example.lifeplan.dao.Schedule
+import com.example.lifeplan.schedule_dao.Schedule
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -54,13 +55,14 @@ fun ItemSchedule(
     modifier: Modifier,
     schedule: Schedule,
     onDelete: () -> Unit,
-    onUpdate: (Schedule) -> Unit
+    onUpdate: (Schedule) -> Unit,
+    context: Context
 ) {
     var isMore by remember { mutableStateOf(false) } // mở rộng item lịch trình
     var freq by remember { mutableStateOf(schedule.frequency) } // tần suất
 
     var editNote by remember { mutableStateOf(schedule.note) } // ghi chú
-    var isShowDialog by remember { mutableStateOf(false) } //có hiện dialog sửa ghi chú hay ko
+    var isShowNoteDialog by remember { mutableStateOf(false) } //có hiện dialog sửa ghi chú hay ko
 
     var timeSetting by remember { mutableStateOf(schedule.time) } // thời gian
     var isShowTimeDialog by remember { mutableStateOf(false) } // hiện dialog chọn thời gian hay ko
@@ -75,8 +77,8 @@ fun ItemSchedule(
 
     var isRepeat by remember { mutableStateOf(schedule.isEnabled) } // có bật switch để báo ko
 
-    var selectedFrequency by remember { mutableStateOf(FrequencyItems.fromString(schedule.frequency)) } // lưu tần suất
-    var showDialogFreq by remember { mutableStateOf(false) } // hiện dialog tần suất hay ko
+    var selectedFrequency by remember { mutableStateOf(schedule.frequency) } // lưu tần suất
+    var isShowDialogFreq by remember { mutableStateOf(false) } // hiện dialog tần suất hay ko
 
     var showDate by remember { mutableIntStateOf(0) } // mở dialog tùy giá trị (0,1,2,3)
     LaunchedEffect(schedule) {
@@ -134,7 +136,7 @@ fun ItemSchedule(
                         .animateContentSize()
                         .clickable(isMore) {
                             //click để tạo dialog sửa note
-                            isShowDialog = true
+                            isShowNoteDialog = !isShowNoteDialog
                         },
                     style = MaterialTheme.typography.bodyLarge,
                     maxLines = if (isMore) Int.MAX_VALUE else 1,
@@ -142,7 +144,7 @@ fun ItemSchedule(
                     textAlign = TextAlign.Start
                 )
 
-                if (isShowDialog) {
+                if (isShowNoteDialog) {
                     NoteDialog(
                         modifier = modifier.fillMaxWidth(),
                         note = editNote,
@@ -151,7 +153,7 @@ fun ItemSchedule(
                             // cập nhật lại note
                             onUpdate(updatedSchedule.copy(note = editNote))
                         },
-                        onDismiss = { isShowDialog = false }
+                        onDismiss = { isShowNoteDialog = !isShowNoteDialog }
                     )
                 }
 
@@ -178,7 +180,7 @@ fun ItemSchedule(
                 style = MaterialTheme.typography.displayMedium,
                 modifier = modifier.clickable {
                     //click để chọn thời gian
-                    isShowTimeDialog = true
+                    isShowTimeDialog = !isShowTimeDialog
                 }
             )
 
@@ -189,7 +191,7 @@ fun ItemSchedule(
                         timeSetting = newTime
                         onUpdate(updatedSchedule.copy(time = timeSetting))
                     },
-                    onDismiss = { isShowTimeDialog = false }
+                    onDismiss = { isShowTimeDialog = !isShowTimeDialog }
                 )
             }
             Row(
@@ -282,7 +284,7 @@ fun ItemSchedule(
                             },
                             modifier = modifier.clickable {
                                 //click để chọn tần suất
-                                showDialogFreq = true
+                                isShowDialogFreq = !isShowDialogFreq
                             }
                         )
                         showDate = when (selectedFrequency) {
@@ -302,13 +304,13 @@ fun ItemSchedule(
                                 3
                             }
                         }
-                        if (showDialogFreq) {
+                        if (isShowDialogFreq) {
                             FrequencyDialog(
                                 modifier = modifier,
                                 frequency = selectedFrequency,
                                 onFrequencyItems = { newFrequency ->
                                     selectedFrequency = newFrequency
-                                    freq = selectedFrequency.desc
+                                    freq = selectedFrequency
                                     // Đặt lại các biến ngày không liên quan
                                     when (selectedFrequency) {
                                         FrequencyItems.ONCE,
@@ -342,7 +344,8 @@ fun ItemSchedule(
                                     pickedDate = it
                                     onUpdate(updatedSchedule.copy(pickedDate = pickedDate))
                                 },
-                                onDismiss = { showDialogFreq = false }
+                                onDismiss = { isShowDialogFreq = !isShowDialogFreq },
+                                context = context
                             )
                         }
                     }

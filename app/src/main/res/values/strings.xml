@@ -8,8 +8,6 @@
     <string name="select_a_schedule_date">Chọn ngày lên lịch</string>
     <string name="number_of_days_for_which_you_want_to_schedule">Số ngày mà bạn muốn đặt lịch</string>
     <string name="number_of_date">"Ngày thứ %1$s: "</string>
-    <string name="click_to_select_date">Click để chọn ngày</string>
-    <string name="select_date">Chọn ngày tại đây</string>
     <string name="select_frequency_for_event">Chọn tần suất cho sự kiện</string>
     <string name="write_note_here">Viết ghi chú vào đây</string>
     <string name="note">Ghi chú</string>
@@ -30,4 +28,21 @@
     <string name="implementation_date">"Ngày thực hiện: "</string>
     <string name="from_to">Từ %1$s đến hết %2$s</string>
     <string name="selected_date">"Số ngày đã chọn: "</string>
+    <string name="monday">Thứ 2</string>
+    <string name="tuesday">Thứ 3</string>
+    <string name="wednesday">Thứ 4</string>
+    <string name="thursday">Thứ 5</string>
+    <string name="friday">Thứ 6</string>
+    <string name="saturday">Thứ 7</string>
+    <string name="sunday">Chủ nhật</string>
+    <string name="home">Trang chủ</string>
+    <string name="expenditure">Chi tiêu</string>
+    <string name="frequency_once">Một lần</string>
+    <string name="frequency_daily">Hằng ngày</string>
+    <string name="frequency_weekly">Hằng tuần</string>
+    <string name="frequency_monthly">Hằng tháng</string>
+    <string name="frequency_yearly">Hằng năm</string>
+    <string name="frequency_date_to_date">Từ ngày đến ngày</string>
+    <string name="frequency_pick_date">Chọn ngày riêng lẻ</string>
+    <string name="invalid_date">Ngày bạn chọn không hợp lệ. Hãy sửa lại</string>
 </resources>

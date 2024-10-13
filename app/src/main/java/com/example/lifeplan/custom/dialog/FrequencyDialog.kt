@@ -1,10 +1,12 @@
 package com.example.lifeplan.custom.dialog
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,18 +29,47 @@ fun FrequencyDialog(
     onSaveDateStart: (String) -> Unit,
     onSaveDateEnd: (String) -> Unit,
     onDateSelected: (List<String>) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    context: Context
 ) {
     var freq by remember { mutableStateOf(frequency) }
     var isShowDatePicker by remember { mutableStateOf(false) }
     var selectedDates by remember { mutableStateOf<List<String>>(emptyList()) }
 
-    val selectDate = stringResource(R.string.select_date)
-    var startDate by remember { mutableStateOf(selectDate) }
-    var endDate by remember { mutableStateOf(selectDate) }
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
+        title = { Text(stringResource(R.string.select_frequency_for_event)) },
+        text = {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+            ) {
+                FrequencyItems.entries
+                    .forEach { frequencyItems ->
+                        Row(
+                            modifier = modifier,
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            RadioButton(
+                                selected = freq == frequencyItems,
+                                onClick = {
+                                    freq = frequencyItems
+                                    isShowDatePicker = !isShowDatePicker
+                                }
+                            )
+                            Text(
+                                modifier = modifier
+                                    .fillMaxWidth(),
+                                text = frequencyItems.getDescription(context)
+                            )
+                        }
+                    }
+            }
+        },
         confirmButton = {
             TextButton(onClick = {
                 onFrequencyItems(freq)
@@ -59,33 +90,14 @@ fun FrequencyDialog(
                 Text(stringResource(R.string.save))
             }
         },
-        title = { Text(stringResource(R.string.select_frequency_for_event)) },
-        text = {
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
+        dismissButton = {
+            Button(
+                onClick = {
+                    //click để hủy
+                    onDismiss()
+                }
             ) {
-                FrequencyItems.entries
-                    .forEach { frequencyItems ->
-                        Row(
-                            modifier = modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            RadioButton(
-                                selected = freq == frequencyItems,
-                                onClick = {
-                                    freq = frequencyItems
-                                    isShowDatePicker = true
-                                }
-                            )
-                            Text(
-                                modifier = modifier
-                                    .fillMaxWidth(),
-                                text = frequencyItems.desc
-                            )
-                        }
-                    }
+                Text(stringResource(R.string.cancel))
             }
         }
     )
@@ -96,9 +108,8 @@ fun FrequencyDialog(
                     date = startDate,
                     onSave = { d ->
                         startDate = d
-                        isShowDatePicker = false
                     },
-                    onDismiss = { isShowDatePicker = false })
+                    onDismiss = { isShowDatePicker = !isShowDatePicker })
             }
 
             FrequencyItems.DATETODATE -> {
@@ -108,8 +119,10 @@ fun FrequencyDialog(
                     onSave = { s, e ->
                         startDate = s
                         endDate = e
-                        isShowDatePicker = false
-                    }, onDismiss = { isShowDatePicker = false })
+                    },
+                    onDismiss = { isShowDatePicker = !isShowDatePicker },
+                    context = context
+                )
             }
 
             FrequencyItems.PICKDATE -> {
@@ -119,9 +132,8 @@ fun FrequencyDialog(
                     nDays = selectedDates.size.toString(),
                     onSave = { dates ->
                         selectedDates = dates
-                        isShowDatePicker = false
                     },
-                    onDismiss = { isShowDatePicker = false })
+                    onDismiss = { isShowDatePicker = !isShowDatePicker })
             }
         }
     }

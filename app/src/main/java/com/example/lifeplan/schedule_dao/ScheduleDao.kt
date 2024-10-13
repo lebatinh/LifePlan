@@ -1,4 +1,4 @@
-package com.example.lifeplan.dao
+package com.example.lifeplan.schedule_dao
 
 import androidx.room.Dao
 import androidx.room.Delete

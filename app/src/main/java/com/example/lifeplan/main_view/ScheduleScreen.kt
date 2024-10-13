@@ -1,14 +1,6 @@
 package com.example.lifeplan.main_view
 
-import android.Manifest
-import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -34,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,14 +37,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lifeplan.R
 import com.example.lifeplan.custom.dialog.FrequencyDialog
 import com.example.lifeplan.custom.dialog.ShowPickDateDialog
@@ -62,61 +48,18 @@ import com.example.lifeplan.custom.dialog.ShowPickMultipleDateDialog
 import com.example.lifeplan.custom.dialog.ShowPickTimeDialog
 import com.example.lifeplan.custom.item.FrequencyItems
 import com.example.lifeplan.custom.item.ItemSchedule
-import com.example.lifeplan.dao.Schedule
-import com.example.lifeplan.ui.theme.LifePlanTheme
+import com.example.lifeplan.schedule_dao.Schedule
 import com.example.lifeplan.viewModel.ScheduleViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class ScheduleActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            LifePlanTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val viewModel: ScheduleViewModel = viewModel(
-                        factory = ViewModelProvider
-                            .AndroidViewModelFactory(
-                                LocalContext.current.applicationContext
-                                        as Application
-                            )
-                    )
-                    ScheduleScreen(viewModel = viewModel, modifier = Modifier)
-                }
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-
-                // Yêu cầu quyền POST_NOTIFICATIONS
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    1001
-                )
-            }
-        }
-
-        val channel = NotificationChannel(
-            "ALARM_CHANNEL",
-            "Alarm Notifications",
-            NotificationManager.IMPORTANCE_HIGH
-        )
-        val notificationManager = getSystemService(NotificationManager::class.java)
-        notificationManager.createNotificationChannel(channel)
-    }
-}
-
 @Composable
-fun ScheduleScreen(modifier: Modifier, viewModel: ScheduleViewModel) {
+fun ScheduleScreen(
+    modifier: Modifier,
+    viewModel: ScheduleViewModel,
+    context: Context
+) {
     val itemSchedule by viewModel.allSchedule.observeAsState(emptyList())
     var isShowAddDialog by remember { mutableStateOf(false) }
 
@@ -143,7 +86,8 @@ fun ScheduleScreen(modifier: Modifier, viewModel: ScheduleViewModel) {
                     viewModel.addSchedule(schedule)
                     isShowAddDialog = !isShowAddDialog
                 },
-                onDismiss = { isShowAddDialog = !isShowAddDialog }
+                onDismiss = { isShowAddDialog = !isShowAddDialog },
+                context = context
             )
         }
 
@@ -168,7 +112,8 @@ fun ScheduleScreen(modifier: Modifier, viewModel: ScheduleViewModel) {
                     },
                     onUpdate = {
                         viewModel.updateSchedule(it) // Cập nhật lịch trình
-                    }
+                    },
+                    context = context
                 )
             }
         }
@@ -212,7 +157,8 @@ fun HeaderScreen(
 fun AddSchedule(
     modifier: Modifier,
     onDismiss: () -> Unit,
-    onSave: (Schedule) -> Unit
+    onSave: (Schedule) -> Unit,
+    context: Context
 ) {
     val calendar = Calendar.getInstance()
 
@@ -227,8 +173,8 @@ fun AddSchedule(
     var numDays by rememberSaveable { mutableIntStateOf(0) } // số ngày chọn của danh sách ngày lẻ
     var selectedDates by rememberSaveable { mutableStateOf<List<String>>(emptyList()) } // danh sách ngày lẻ
 
-    var isShowFreqDialog by remember { mutableStateOf(false) } // có mở dialog tần suất k
     var isShowTimeDialog by remember { mutableStateOf(false) } // có mở dialog thời gian k
+    var isShowFreqDialog by remember { mutableStateOf(false) } // có mở dialog tần suất k
     var showDate by remember { mutableIntStateOf(0) } // kiểu tần suất ( 0,1,2,3)
     var isShowDateDialog by remember { mutableStateOf(false) } // có mở dialog ngày k
 
@@ -265,7 +211,7 @@ fun AddSchedule(
                     )
                     Text(
                         modifier = modifier.clickable {
-                            isShowTimeDialog = true
+                            isShowTimeDialog = !isShowTimeDialog
                         },
                         text = time
                     )
@@ -275,7 +221,7 @@ fun AddSchedule(
                     ShowPickTimeDialog(
                         time = time,
                         onSave = { newTime -> time = newTime },
-                        onDismiss = { isShowTimeDialog = false }
+                        onDismiss = { isShowTimeDialog = !isShowTimeDialog }
                     )
                 }
 
@@ -290,8 +236,8 @@ fun AddSchedule(
                     )
                     Spacer(modifier = modifier.width(8.dp))
                     Text(
-                        modifier = modifier.clickable { isShowFreqDialog = true },
-                        text = freq.desc
+                        modifier = modifier.clickable { isShowFreqDialog = !isShowFreqDialog },
+                        text = freq.getDescription(context)
                     )
                     if (isShowFreqDialog) {
                         FrequencyDialog(
@@ -310,7 +256,8 @@ fun AddSchedule(
                                 selectedDates = it
                                 numDays = it.size
                             },
-                            onDismiss = { isShowFreqDialog = false }
+                            onDismiss = { isShowFreqDialog = !isShowFreqDialog },
+                            context = context
                         )
                     }
                 }
@@ -348,7 +295,7 @@ fun AddSchedule(
                             Text(
                                 modifier = modifier
                                     .fillMaxWidth()
-                                    .clickable { isShowDateDialog = true },
+                                    .clickable { isShowDateDialog = !isShowDateDialog },
                                 text = startDate
                             )
                         }
@@ -368,7 +315,7 @@ fun AddSchedule(
                             Text(
                                 modifier = modifier
                                     .fillMaxWidth()
-                                    .clickable { isShowDateDialog = true },
+                                    .clickable { isShowDateDialog = !isShowDateDialog },
                                 text = startDate
                             )
                         }
@@ -380,7 +327,7 @@ fun AddSchedule(
                             modifier = modifier
                                 .align(Alignment.CenterHorizontally)
                                 .fillMaxWidth()
-                                .clickable { isShowDateDialog = true },
+                                .clickable { isShowDateDialog = !isShowDateDialog },
                             text = stringResource(R.string.from_to, startDate, endDate)
                         )
                     }
@@ -398,7 +345,7 @@ fun AddSchedule(
                             )
                             Text(
                                 modifier = modifier.clickable {
-                                    isShowDateDialog = true
+                                    isShowDateDialog = !isShowDateDialog
                                 },
                                 text = numDays.toString()
                             )
@@ -411,13 +358,13 @@ fun AddSchedule(
                         0 -> ShowPickDateDialog(
                             date = startDate,
                             onSave = { newDate -> startDate = newDate },
-                            onDismiss = { isShowDateDialog = false }
+                            onDismiss = { isShowDateDialog = !isShowDateDialog }
                         )
 
                         1 -> ShowPickDateDialog(
                             date = startDate,
                             onSave = { newDate -> startDate = newDate },
-                            onDismiss = { isShowDateDialog = false }
+                            onDismiss = { isShowDateDialog = !isShowDateDialog }
                         )
 
                         2 -> ShowPickDateRangeDialog(
@@ -426,7 +373,8 @@ fun AddSchedule(
                                 startDate = s
                                 endDate = e
                             },
-                            onDismiss = { isShowDateDialog = false }
+                            onDismiss = { isShowDateDialog = !isShowDateDialog },
+                            context = context
                         )
 
                         3 -> ShowPickMultipleDateDialog(
@@ -435,7 +383,7 @@ fun AddSchedule(
                             onSave = { dates ->
                                 selectedDates = dates
                             },
-                            onDismiss = { isShowDateDialog = false }
+                            onDismiss = { isShowDateDialog = !isShowDateDialog }
                         )
                     }
                 }
@@ -449,7 +397,7 @@ fun AddSchedule(
                         Schedule(
                             note = note,
                             time = time,
-                            frequency = freq.desc,
+                            frequency = freq,
                             dateStart = if (showDate == 0 || showDate == 1 || showDate == 2) startDate else "",
                             dateEnd = if (showDate == 2) endDate else "",
                             pickedDate = if (showDate == 3) selectedDates else emptyList(),

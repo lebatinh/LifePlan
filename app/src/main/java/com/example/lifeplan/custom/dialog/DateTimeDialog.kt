@@ -3,9 +3,9 @@ package com.example.lifeplan.custom.dialog
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -119,11 +117,11 @@ fun ShowPickDateDialog( // Chọn thời gian ngày/tháng/năm 1 lần
 fun ShowPickDateRangeDialog(// Chọn thời gian ngày/tháng/năm bắt đầu và kết thúc (khoảng)
     modifier: Modifier,
     onSave: (String, String) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    context: Context
 ) {
-    val selectDate = stringResource(R.string.select_date)
-    var startDate by remember { mutableStateOf(selectDate) }
-    var endDate by remember { mutableStateOf(selectDate) }
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
 
     var isShowStartDatePicker by remember { mutableStateOf(false) }
     var isShowEndDatePicker by remember { mutableStateOf(false) }
@@ -135,6 +133,8 @@ fun ShowPickDateRangeDialog(// Chọn thời gian ngày/tháng/năm bắt đầu
                 if (isDateValid(startDate, endDate)) {
                     onSave(startDate, endDate)
                     onDismiss()
+                } else {
+                    Toast.makeText(context, R.string.invalid_date, Toast.LENGTH_SHORT).show()
                 }
 
             }) {
@@ -151,11 +151,12 @@ fun ShowPickDateRangeDialog(// Chọn thời gian ngày/tháng/năm bắt đầu
                     modifier = modifier
                         .fillMaxWidth()
                         .clickable {
-                            isShowStartDatePicker = true
-                        }
+                            isShowStartDatePicker = !isShowStartDatePicker
+                        },
+                    Arrangement.SpaceBetween,
+                    Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.start_date))
-                    Spacer(modifier = modifier.width(8.dp))
+                    Text(text = stringResource(R.string.start_date), modifier = modifier)
 
                     Text(
                         text = startDate,
@@ -167,7 +168,6 @@ fun ShowPickDateRangeDialog(// Chọn thời gian ngày/tháng/năm bắt đầu
                         ShowPickDateDialog(date = startDate, onSave = { sDate ->
                             startDate = sDate
                             isShowStartDatePicker = false
-
                         }, onDismiss = { isShowStartDatePicker = false })
                     }
                 }
@@ -176,13 +176,15 @@ fun ShowPickDateRangeDialog(// Chọn thời gian ngày/tháng/năm bắt đầu
                     modifier = modifier
                         .fillMaxWidth()
                         .clickable {
-                            isShowEndDatePicker = true
-                        }
+                            isShowEndDatePicker = !isShowEndDatePicker
+                        },
+                    Arrangement.SpaceBetween,
+                    Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.end_date)
+                        text = stringResource(R.string.end_date),
+                        modifier = modifier
                     )
-                    Spacer(modifier = modifier.width(8.dp))
 
                     Text(
                         text = endDate,
@@ -256,11 +258,7 @@ fun ShowPickMultipleDateDialog(// Chọn danh sách thời gian ngày/tháng/nă
         text = {
             Column(
                 modifier = modifier
-                    .fillMaxWidth()
-                    .scrollable(
-                        enabled = true, state = rememberScrollState(),
-                        orientation = Orientation.Vertical
-                    ),
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -285,17 +283,14 @@ fun ShowPickMultipleDateDialog(// Chọn danh sách thời gian ngày/tháng/nă
                             .clickable {
                                 showDatePicker = i
                             },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        Arrangement.SpaceBetween,
+                        Alignment.CenterVertically
                     ) {
                         Text(
                             text = stringResource(R.string.number_of_date, i + 1),
                             modifier = modifier
                         )
-                        val date =
-                            if (selectedDates.size > i) selectedDates.elementAt(i) else stringResource(
-                                R.string.click_to_select_date
-                            )
+                        val date = if (selectedDates.size > i) selectedDates.elementAt(i) else ""
                         Text(text = date, modifier = modifier)
                     }
                 }

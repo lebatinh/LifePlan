@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:allowBackup="true"
@@ -27,20 +28,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver
             android:name=".broadcast_receiver.AlarmBootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".service.AlarmService"
-            android:foregroundServiceType="mediaPlayback"
+            android:foregroundServiceType="location|mediaPlayback"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
-        <receiver android:name=".broadcast_receiver.AlarmReceiver" />
+
+        <receiver
+            android:name=".broadcast_receiver.AlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
     </application>
 </manifest>
