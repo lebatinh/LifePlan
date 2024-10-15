@@ -37,7 +37,7 @@
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
     <string name="home">Home</string>
-    <string name="expenditure">Expenditure</string>
+    <string name="expense">Expenditure</string>
     <string name="frequency_once">Only once</string>
     <string name="frequency_daily">Once a day</string>
     <string name="frequency_weekly">Once a week</string>
@@ -47,5 +47,7 @@
     <string name="frequency_pick_date">Select individual dates</string>
     <string name="invalid_date">The date you selected is invalid. Please correct it.</string>
     <string name="Expenditure">Expense notebook</string>
-    <string name="diferrentOfMoney">{%1$s}đ compared to last month</string>
+    <string name="income">Income</string>
+    <string name="diferrentMoney">%1$s%2$s compared to last month</string>
+    <string name="differenceMoney">Income - Expense = %1$s%2$s</string>
 </resources>

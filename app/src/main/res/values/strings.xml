@@ -36,7 +36,7 @@
     <string name="saturday">Thứ 7</string>
     <string name="sunday">Chủ nhật</string>
     <string name="home">Trang chủ</string>
-    <string name="expenditure">Chi tiêu</string>
+    <string name="expense">Chi tiêu</string>
     <string name="frequency_once">Một lần</string>
     <string name="frequency_daily">Hằng ngày</string>
     <string name="frequency_weekly">Hằng tuần</string>
@@ -46,5 +46,7 @@
     <string name="frequency_pick_date">Chọn ngày riêng lẻ</string>
     <string name="invalid_date">Ngày bạn chọn không hợp lệ. Hãy sửa lại</string>
     <string name="Expenditure">Sổ giao dịch</string>
-    <string name="diferrentOfMoney">{%1$s}đ so với tháng trước</string>
+    <string name="income">Thu nhập</string>
+    <string name="diferrentMoney">%1$s%2$s so với tháng trước</string>
+    <string name="differenceMoney">Thu - Chi = %1$s%2$s</string>
 </resources>

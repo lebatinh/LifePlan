@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -128,8 +127,6 @@ class MainActivity : ComponentActivity() {
             val intent = Intent(ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
                 .setData(Uri.parse("package:$packageName"))
             startActivity(intent)
-        } else {
-            Toast.makeText(this, "Ứng dụng đã tắt tối ưu hóa pin.", Toast.LENGTH_SHORT).show()
         }
     }
 }
@@ -153,7 +150,7 @@ fun HorizontalPagerScreen(
                 ScheduleScreen(modifier = Modifier, viewModel = viewModel, context = context)
             }
 
-            2 -> ExpenditureScreen(modifier = Modifier)
+            2 -> ExpenditureScreen()
         }
     }
 }
@@ -167,7 +164,7 @@ fun BottomNavigationBar(navController: NavHostController, pagerState: PagerState
         title = LocalContext.current.getString(R.string.schedule)
     }
     val expenditure = BottomNavItem.Expenditure.apply {
-        title = LocalContext.current.getString(R.string.expenditure)
+        title = LocalContext.current.getString(R.string.expense)
     }
 
     val items = listOf(
