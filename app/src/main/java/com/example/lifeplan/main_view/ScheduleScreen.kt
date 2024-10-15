@@ -38,8 +38,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.lifeplan.R
 import com.example.lifeplan.custom.dialog.FrequencyDialog
 import com.example.lifeplan.custom.dialog.ShowPickDateDialog
@@ -137,7 +139,7 @@ fun HeaderScreen(
             textAlign = TextAlign.Center,
             text = title,
             maxLines = 1,
-            style = MaterialTheme.typography.displayLarge
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 24.sp)
         )
 
         IconButton(

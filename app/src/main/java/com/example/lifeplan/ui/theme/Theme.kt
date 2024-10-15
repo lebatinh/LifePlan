@@ -56,9 +56,7 @@ private val LightColorScheme = lightColorScheme(
     onError = LightOnError,
 
     outline = LightExpense,
-    outlineVariant = LightIncome,
-
-
+    outlineVariant = LightIncome
     )
 
 @Composable

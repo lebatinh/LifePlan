@@ -45,5 +45,7 @@
     <string name="frequency_yearly">Once a year</string>
     <string name="frequency_date_to_date">From day to day</string>
     <string name="frequency_pick_date">Select individual dates</string>
-    <string name="invalid_date">Ngày bạn chọn không hợp lệ. Hãy sửa lại</string>
+    <string name="invalid_date">The date you selected is invalid. Please correct it.</string>
+    <string name="Expenditure">Expense notebook</string>
+    <string name="diferrentOfMoney">{%1$s}đ compared to last month</string>
 </resources>
