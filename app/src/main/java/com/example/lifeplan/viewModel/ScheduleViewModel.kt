@@ -123,50 +123,32 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         val startDateTime = dateStart.atTime(time)
         val endDateTime = dateEnd.atTime(time)
 
-        // Nếu thời gian hiện tại chưa đến ngày bắt đầu
-        if (currentTime.isBefore(startDateTime)) {
-            // Lập lịch từ dateStart đến dateEnd
-            var dateToSchedule = dateStart
-            while (!dateToSchedule.isAfter(dateEnd)) {
-                scheduleAlarm(
-                    context,
-                    schedule,
-                    dateToSchedule.atTime(time)
-                )
-                dateToSchedule = dateToSchedule.plusDays(1)
-            }
-        }
-        // Nếu thời gian hiện tại đã vượt quá dateEnd
-        else if (currentTime.isAfter(endDateTime)) {
-            // hủy báo thức này
-            updateSchedule(schedule.copy(isEnabled = false))
-            cancelAlarm(schedule)
-        }
-        // Nếu thời gian hiện tại nằm trong khoảng từ dateStart đến dateEnd
-        else {
-            // Kiểm tra xem thời gian hiện tại đã qua giờ:phút đã cài đặt chưa
-            // Nếu chưa, đặt lịch cho giờ:phút của ngày hiện tại
-            if (currentTime.isEqual(startDateTime)) {
-                scheduleAlarm(
-                    context,
-                    schedule,
-                    startDateTime
-                )
-            }
-            // Nếu đã qua, kiểm tra ngày tiếp theo
-            else {
-                val nextDate = currentTime.toLocalDate().plusDays(1)
-                val nextScheduledTime = nextDate.atTime(time)
-
-                if (!nextScheduledTime.isAfter(endDateTime)) {
-                    // Nếu không vượt qua, đặt lịch cho giờ:phút của ngày tiếp theo
-                    scheduleAlarm(
-                        context,
-                        schedule,
-                        nextScheduledTime
-                    )
+        // Nếu thời gian hiện tại chưa hết hạn
+        if (currentTime.isBefore(endDateTime)) {
+            // Nếu thời gian hiện tại chưa đến ngày bắt đầu
+            if (currentTime.isBefore(startDateTime)) {
+                // Lập lịch từ dateStart đến dateEnd
+                var dateToSchedule = dateStart
+                while (!dateToSchedule.isAfter(dateEnd)) {
+                    scheduleAlarm(context, schedule, dateToSchedule.atTime(time))
+                    dateToSchedule = dateToSchedule.plusDays(1)
                 }
             }
+            // Nếu thời gian hiện tại đã qua giờ của ngày bắt đầu
+            else if (currentTime.isEqual(startDateTime) || currentTime.isAfter(startDateTime)) {
+                scheduleAlarm(context, schedule, startDateTime)
+            } else {
+                val nextScheduledTime = currentTime.toLocalDate().plusDays(1).atTime(time)
+
+                // TAG: Lập lịch cho ngày tiếp theo nếu vẫn trong khoảng dateEnd
+                if (!nextScheduledTime.isAfter(endDateTime)) {
+                    scheduleAlarm(context, schedule, nextScheduledTime)
+                }
+            }
+        } else {
+            // Hủy nếu thời gian hiện tại đã qua thời gian kết thúc
+            updateSchedule(schedule.copy(isEnabled = false))
+            cancelAlarm(schedule)
         }
     }
 
@@ -182,39 +164,35 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
         // Lấy ngày cuối cùng trong danh sách
         val lastPickedDate = pickedDates.maxOfOrNull {
-            LocalDate.parse(
-                it,
-                DateTimeFormatter.ofPattern("dd/MM/yyyy")
-            )
+            LocalDate.parse(it, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         } ?: return // Nếu không có ngày nào, thoát
 
-        // Nếu ngày hiện tại đã vượt quá ngày cuối cùng, cập nhật isEnabled = false
+        // Hủy lịch nếu đã vượt qua ngày cuối cùng trong danh sách
         if (currentTime.toLocalDate().isAfter(lastPickedDate)) {
             updateSchedule(schedule.copy(isEnabled = false))
             cancelAlarm(schedule)
             return
         }
 
-        // Nếu chưa, kiểm tra ngày đã chọn
-        schedule.pickedDate.forEach { dateStr ->
+        // Lặp qua từng ngày trong danh sách và lập lịch cho ngày phù hợp
+        pickedDates.forEach { dateStr ->
             val pickedDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+
+            val scheduledTime = pickedDate.atTime(time)
 
             // Nếu ngày đã chọn trước ngày hiện tại, bỏ qua
             if (pickedDate.isBefore(currentDate)) {
                 return@forEach // Bỏ qua ngày này
             } else if (pickedDate.isEqual(currentDate)) {
                 // Nếu ngày đã chọn bằng ngày hiện tại
-                val scheduledTime = pickedDate.atTime(time)
-                if (currentTime.isAfter(scheduledTime)) {
-                    // Nếu đã qua giờ:phút, bỏ qua và tiếp tục kiểm tra các ngày tiếp theo
-                    return@forEach
-                } else {
-                    // Nếu chưa qua giờ:phút đã định thì lập lịch cho giờ:phút của ngày hiện tại
+
+                // Nếu thời gian hiện tại chưa qua giờ lập lịch, đặt báo thức
+                if (currentTime.isEqual(scheduledTime) || currentTime.isBefore(scheduledTime)) {
                     scheduleAlarm(context, schedule, scheduledTime)
                 }
             } else {
                 // Nếu ngày đã chọn lớn hơn ngày hiện tại
-                scheduleAlarm(context, schedule, pickedDate.atTime(time))
+                scheduleAlarm(context, schedule, scheduledTime)
             }
         }
     }
