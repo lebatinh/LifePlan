@@ -19,7 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.AlarmAdd
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -37,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -69,7 +70,11 @@ fun ScheduleScreen(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        HeaderScreen(modifier, title = stringResource(R.string.schedule)) {
+        HeaderScreen(
+            modifier,
+            title = stringResource(R.string.schedule),
+            icon = Icons.Default.AlarmAdd
+        ) {
             // Click để thêm lịch trình
             isShowAddDialog = !isShowAddDialog
         }
@@ -126,6 +131,7 @@ fun ScheduleScreen(
 fun HeaderScreen(
     modifier: Modifier,
     title: String,
+    icon: ImageVector,
     onClickAdd: () -> Unit
 ) {
     Box(
@@ -147,7 +153,7 @@ fun HeaderScreen(
             modifier = modifier.align(Alignment.CenterEnd)
         ) {
             Icon(
-                imageVector = Icons.Default.AddCircle,
+                imageVector = icon,
                 contentDescription = "Click to Add",
                 modifier.size(50.dp)
             )

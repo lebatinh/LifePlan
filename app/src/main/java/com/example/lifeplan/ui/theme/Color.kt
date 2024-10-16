@@ -21,7 +21,7 @@ val LightError = Color(0xFFC20000)
 val LightOnError = Color(0xFFD9D9D9)
 
 val LightExpense = Color(0xFFFF0000) //chi tiêu
-val LightIncome = Color(0xFF00FF00) //thu nhập
+val LightIncome = Color(0xFF008500) //thu nhập
 
 // Dark theme colors
 val DarkPrimaryVariant = Color(0xFF6200EE)
@@ -42,4 +42,4 @@ val DarkError = Color(0xFFCF6679)
 val DarkOnError = Color(0xFF000000)
 
 val DarkExpense = Color(0xFFFF6666) //chi tiêu
-val DarkIncome = Color(0xFF66FF66) //thu nhập
+val DarkIncome = Color(0xFF388F38) //thu nhập

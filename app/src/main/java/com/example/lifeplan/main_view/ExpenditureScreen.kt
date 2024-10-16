@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,17 +14,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.PostAdd
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,7 +72,8 @@ fun ExpenditureScreen() {
 
         HeaderScreen(
             modifier = Modifier,
-            title = stringResource(R.string.Expenditure)
+            title = stringResource(R.string.Expenditure),
+            icon = Icons.Default.PostAdd
         ) {
             // Sự kiện thêm giao dịch vào sổ
 
@@ -173,9 +179,13 @@ fun ExpenditureScreen() {
 
             }
 
-            HorizontalDivider(modifier = Modifier.padding(8.dp), thickness = 1.dp)
+            HorizontalDivider(
+                modifier = Modifier.padding(8.dp),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
 
-
+            TabRowScreen()
         }
     }
 }
@@ -287,6 +297,84 @@ fun ExpenditureBox(
                 color = iconColor
             )
         }
+    }
+}
+
+
+@Composable
+fun TabRowScreen(modifier: Modifier = Modifier) {
+    val tabs = listOf("Danh mục con", "Danh mục cha")
+
+    var selectTabIndex by remember { mutableIntStateOf(0) }
+
+    Column(
+        modifier = Modifier.padding(12.dp)
+    ) {
+        TabRow(
+            selectedTabIndex = selectTabIndex,
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            divider = {
+                HorizontalDivider(
+                    thickness = 0.dp
+                )
+            }
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectTabIndex == index,
+                    onClick = { selectTabIndex = index },
+                    text = { Text(text = title) },
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.background
+                )
+            }
+        }
+
+        when (selectTabIndex) {
+            0 -> SmallCategory()
+            1 -> LargeCategory()
+        }
+    }
+}
+
+@Composable
+fun SmallCategory(modifier: Modifier = Modifier) {
+    LazyColumn(
+        contentPadding = PaddingValues(8.dp),
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+//        items( , key ={} ){
+//            CategoryItem(
+//                image = ,
+//                text = ,
+//                money = ,
+//                typeMoney = ,
+//                onClick = {}
+//            )
+//        }
+    }
+}
+
+@Composable
+fun LargeCategory(modifier: Modifier = Modifier) {
+    LazyColumn(
+        contentPadding = PaddingValues(8.dp),
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+//        items( , key ={} ){
+//            CategoryItem(
+//                image = ,
+//                text = ,
+//                money = ,
+//                typeMoney = ,
+//                onClick = {}
+//            )
+//        }
     }
 }
 
