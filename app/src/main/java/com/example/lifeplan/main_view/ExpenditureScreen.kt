@@ -71,7 +71,6 @@ fun ExpenditureScreen() {
         val formattedDate = currentDate.format(formatter)
 
         HeaderScreen(
-            modifier = Modifier,
             title = stringResource(R.string.Expenditure),
             icon = Icons.Default.PostAdd
         ) {

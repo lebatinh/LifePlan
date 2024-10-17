@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -44,6 +45,7 @@ fun CustomWeekCalendar(
         modifier = Modifier
             .padding(8.dp)
             .border(2.dp, MaterialTheme.colorScheme.onBackground)
+            .height(350.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             // Hiển thị các thứ trong tuần
@@ -67,7 +69,7 @@ fun CustomWeekCalendar(
             }
 
             // Hiển thị lịch của tuần dưới dạng lưới 7 ngày
-            LazyVerticalGrid(columns = GridCells.Fixed(7)) {
+            LazyVerticalGrid(columns = GridCells.Fixed(7), modifier = Modifier.fillMaxHeight()) {
                 items(daysInWeek) { date ->
                     val dateString =
                         date.format(dateFormatter) // Chuyển đổi LocalDate thành chuỗi "dd/MM/yyyy"
@@ -81,7 +83,7 @@ fun CustomWeekCalendar(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = date.dayOfMonth.toString(),
+                            text = "${date.dayOfMonth}/${date.monthValue}",
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (eventLabel != null) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
                         )

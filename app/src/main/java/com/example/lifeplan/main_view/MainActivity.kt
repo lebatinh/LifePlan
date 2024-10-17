@@ -145,9 +145,9 @@ fun HorizontalPagerScreen(
         modifier = modifier
     ) { page ->
         when (page) {
-            0 -> HomeScreen(modifier = Modifier)
+            0 -> HomeScreen()
             1 -> {
-                ScheduleScreen(modifier = Modifier, viewModel = viewModel, context = context)
+                ScheduleScreen(viewModel = viewModel, context = context)
             }
 
             2 -> ExpenditureScreen()

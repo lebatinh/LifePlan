@@ -49,4 +49,13 @@
     <string name="income">Thu nhập</string>
     <string name="diferrentMoney">%1$s%2$s so với tháng trước</string>
     <string name="differenceMoney">Thu - Chi = %1$s%2$s</string>
+    <string name="overview">1. Tổng quan</string>
+    <string name="this_week">Tuần này:</string>
+    <string name="description_of_this_week">Bạn có %1$s công việc cần làm\ntrong %2$s ngày còn lại của tuần này</string>
+    <string name="description_expense_this_week">Chi tiêu trong tuần này: %1$s%2$s</string>
+    <string name="next_week">Tuần sau:</string>
+    <string name="description_of_next_week">Bạn có %1$s việc đã lên lịch</string>
+    <string name="report">2. Báo cáo lịch trình và chi tiêu</string>
+    <string name="overview_schedule">Tổng quan lịch trình tháng hiện tại\nTháng %1$s</string>
+    <string name="last_week_report">Báo cáo tài chính tuần trước\n%1$s</string>
 </resources>

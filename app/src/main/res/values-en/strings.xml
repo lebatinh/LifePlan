@@ -29,13 +29,13 @@
     <string name="implementation_date">"Date of execution: "</string>
     <string name="from_to">From %1$s to %2$s</string>
     <string name="selected_date">"Selected number of days: "</string>
-    <string name="monday">Monday</string>
-    <string name="tuesday">Tuesday</string>
-    <string name="wednesday">Wednesday</string>
-    <string name="thursday">Thursday</string>
-    <string name="friday">Friday</string>
-    <string name="saturday">Saturday</string>
-    <string name="sunday">Sunday</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
     <string name="home">Home</string>
     <string name="expense">Expenditure</string>
     <string name="frequency_once">Only once</string>
@@ -50,4 +50,13 @@
     <string name="income">Income</string>
     <string name="diferrentMoney">%1$s%2$s compared to last month</string>
     <string name="differenceMoney">Income - Expense = %1$s%2$s</string>
+    <string name="overview">1. Overview</string>
+    <string name="this_week">Current Week:</string>
+    <string name="description_of_this_week">You have %1$s tasks to do\nin the remaining %2$s days of this week.</string>
+    <string name="description_expense_this_week">Spending this week: %1$s%2$s</string>
+    <string name="next_week">Next week:</string>
+    <string name="description_of_next_week">You have %1$s scheduled task</string>
+    <string name="report">2. Schedule and expenditure report</string>
+    <string name="overview_schedule">Overview of current month\'s schedule\n%1$s</string>
+    <string name="last_week_report">Last week\'s financial report\n%1$s</string>
 </resources>

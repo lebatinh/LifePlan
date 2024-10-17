@@ -59,7 +59,6 @@ import java.util.Locale
 
 @Composable
 fun ScheduleScreen(
-    modifier: Modifier,
     viewModel: ScheduleViewModel,
     context: Context
 ) {
@@ -67,11 +66,10 @@ fun ScheduleScreen(
     var isShowAddDialog by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
     ) {
         HeaderScreen(
-            modifier,
             title = stringResource(R.string.schedule),
             icon = Icons.Default.AlarmAdd
         ) {
@@ -82,7 +80,7 @@ fun ScheduleScreen(
         if (isShowAddDialog) {
             // hiện dialog thêm lịch trình
             AddSchedule(
-                modifier = modifier
+                modifier = Modifier
                     .padding(8.dp)
                     .scrollable(
                         enabled = true,
@@ -98,9 +96,9 @@ fun ScheduleScreen(
             )
         }
 
-        Spacer(modifier = modifier.size(16.dp))
+        Spacer(modifier = Modifier.size(16.dp))
         LazyColumn(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .scrollable(
                     enabled = true,
@@ -112,7 +110,7 @@ fun ScheduleScreen(
             items(itemSchedule, key = { it.id }) { schedule ->
                 // Truyền đúng thuộc tính của đối tượng Schedule
                 ItemSchedule(
-                    modifier = modifier,
+                    modifier = Modifier,
                     schedule = schedule,
                     onDelete = {
                         viewModel.deleteSchedule(schedule) // Xóa lịch trình
@@ -129,19 +127,18 @@ fun ScheduleScreen(
 
 @Composable
 fun HeaderScreen(
-    modifier: Modifier,
     title: String,
     icon: ImageVector,
     onClickAdd: () -> Unit
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth(1f)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = modifier,
+            modifier = Modifier,
             textAlign = TextAlign.Center,
             text = title,
             maxLines = 1,
@@ -150,12 +147,12 @@ fun HeaderScreen(
 
         IconButton(
             onClick = onClickAdd,
-            modifier = modifier.align(Alignment.CenterEnd)
+            modifier = Modifier.align(Alignment.CenterEnd)
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = "Click to Add",
-                modifier.size(50.dp)
+                Modifier.size(50.dp)
             )
         }
     }
