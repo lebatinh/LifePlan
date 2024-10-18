@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -38,7 +37,6 @@ fun CustomMonthCalendar(
         modifier = Modifier
             .padding(8.dp)
             .border(2.dp, MaterialTheme.colorScheme.onBackground)
-            .height(350.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             Row {
@@ -60,7 +58,9 @@ fun CustomMonthCalendar(
                 }
             }
 
-            LazyVerticalGrid(columns = GridCells.Fixed(7), modifier = Modifier.fillMaxHeight()) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(7), modifier = Modifier.height(350.dp)
+            ) {
                 items(firstDayOfMonth - 1) {
                     Text(text = "", modifier = Modifier.height(50.dp))
                 }

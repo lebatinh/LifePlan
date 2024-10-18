@@ -59,4 +59,11 @@
     <string name="report">2. Schedule and expenditure report</string>
     <string name="overview_schedule">Overview of current month\'s schedule\n%1$s</string>
     <string name="last_week_report">Last week\'s financial report\n%1$s</string>
+    <string name="overview_expense_last_week">Overview of your last week\'s spending</string>
+    <string name="total_expense_last_week">Last week\'s total expenditure was %1$s%2$s.\n%3$s last week</string>
+    <string name="type_highest_expense">You spend the most on the category %1$s with the amount of %2$s%3$s accounting for %4$s%% of total spending</string>
+    <string name="highest_transacsion">Last week\'s highest trading value was %1$s%2$s on %3$s</string>
+    <string name="type_up_expense">Increase %1$s% compared to</string>
+    <string name="type_down_expense">Decrease %1$s% compared to</string>
+    <string name="type_equal_expense">The same as</string>
 </resources>

@@ -58,4 +58,11 @@
     <string name="report">2. Báo cáo lịch trình và chi tiêu</string>
     <string name="overview_schedule">Tổng quan lịch trình tháng hiện tại\nTháng %1$s</string>
     <string name="last_week_report">Báo cáo tài chính tuần trước\n%1$s</string>
+    <string name="overview_expense_last_week">Tổng quan chi tiêu tuần trước của bạn</string>
+    <string name="total_expense_last_week">Tổng chi tiêu tuần trước là %1$s%2$s.\n%3$s tuần trước</string>
+    <string name="type_highest_expense">Bạn chi tiêu nhiều nhất vào mục %1$s với số tiền là %2$s%3$s chiếm %4$s%% tổng chi tiêu</string>
+    <string name="highest_transacsion">Giao dịch cao nhất tuần trước có giá trị là %1$s%2$s vào %3$s</string>
+    <string name="type_up_expense">Tăng %1$s% so với</string>
+    <string name="type_down_expense">Giảm %1$s% so với</string>
+    <string name="type_equal_expense">Bằng</string>
 </resources>
